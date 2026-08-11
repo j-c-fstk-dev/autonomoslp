@@ -1,0 +1,6 @@
+{
+  "name": "Mão na Massa - Portfólio Premium",
+  "description": "Demonstração de portfólio elegante e minimalista para profissionais autônomos (pedreiros, eletricistas, encanadores) com orçamentador interativo e integração direta com WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
