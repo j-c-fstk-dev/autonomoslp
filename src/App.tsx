@@ -23,10 +23,22 @@ import PortfolioGallery from './components/PortfolioGallery';
 import FAQs from './components/FAQs';
 import { profiles } from './data';
 
+const profileIds = ['pedreiro', 'eletricista', 'encanador'] as const;
+type ProfileId = (typeof profileIds)[number];
+
+function getConfiguredProfile(): ProfileId {
+  const configuredProfile = import.meta.env.VITE_ACTIVE_PROFILE;
+
+  return profileIds.includes(configuredProfile as ProfileId)
+    ? (configuredProfile as ProfileId)
+    : 'pedreiro';
+}
+
 export default function App() {
-  // Demo states (can be modified by DeveloperPanel)
-  const [role, setRole] = useState<'pedreiro' | 'eletricista' | 'encanador'>('pedreiro');
-  const [customName, setCustomName] = useState(profiles.pedreiro.defaultName);
+  // The public profile is chosen at build time through VITE_ACTIVE_PROFILE.
+  // The panel below can still switch it locally while developing a demo.
+  const [role, setRole] = useState<ProfileId>(getConfiguredProfile);
+  const [customName, setCustomName] = useState(() => profiles[getConfiguredProfile()].defaultName);
   const [customPhone, setCustomPhone] = useState('5511999999999');
   
   // Interaction states
@@ -382,16 +394,18 @@ export default function App() {
         </button>
       </div>
 
-      {/* 12. DEVELOPER / PITCH CONTROLLER PANEL (Jorge) */}
-      <DeveloperPanel
-        currentRole={role}
-        setRole={setRole}
-        customName={customName}
-        setCustomName={setCustomName}
-        customPhone={customPhone}
-        setCustomPhone={setCustomPhone}
-        onReset={handleReset}
-      />
+      {/* Available only in local development; never rendered in the public UI. */}
+      {import.meta.env.DEV && (
+        <DeveloperPanel
+          currentRole={role}
+          setRole={setRole}
+          customName={customName}
+          setCustomName={setCustomName}
+          customPhone={customPhone}
+          setCustomPhone={setCustomPhone}
+          onReset={handleReset}
+        />
+      )}
 
     </div>
   );
