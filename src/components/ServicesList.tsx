@@ -5,6 +5,7 @@ import { ProfessionalProfile, Service } from '../types';
 interface ServicesListProps {
   profile: ProfessionalProfile;
   onSelectService: (serviceId: string) => void;
+  onStartWhatsAppConversation: (serviceName: string) => void;
 }
 
 // Map Lucide icons dynamically
@@ -13,13 +14,14 @@ const renderServiceIcon = (iconName: string, colorClass: string) => {
   return <IconComponent className={`h-6 w-6 ${colorClass}`} />;
 };
 
-export default function ServicesList({ profile, onSelectService }: ServicesListProps) {
+export default function ServicesList({ profile, onSelectService, onStartWhatsAppConversation }: ServicesListProps) {
   
   const getAccentTextClass = () => {
     if (profile.id === 'pedreiro') return 'text-amber-700';
     if (profile.id === 'eletricista') return 'text-amber-600';
     return 'text-sky-600';
   };
+  const isDirectContact = profile.id === 'pedreiro';
 
   return (
     <section id="servicos" className="bg-white py-20 border-b border-stone-200/50">
@@ -85,7 +87,7 @@ export default function ServicesList({ profile, onSelectService }: ServicesListP
 
                   {/* Pricing and Action Bar */}
                   <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-stone-100 pt-6">
-                    <div>
+                    {!isDirectContact && <div>
                       <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block font-mono mb-1">
                         Preço Estimado de Mão de Obra
                       </span>
@@ -97,15 +99,15 @@ export default function ServicesList({ profile, onSelectService }: ServicesListP
                           / {service.unit}
                         </span>
                       </div>
-                    </div>
+                    </div>}
 
                     <button
-                      onClick={() => onSelectService(service.id)}
+                      onClick={() => isDirectContact ? onStartWhatsAppConversation(service.name) : onSelectService(service.id)}
                       className={`inline-flex items-center justify-center gap-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm px-6 py-3 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer w-full sm:w-auto`}
                       id={`select-service-${service.id}`}
                     >
-                      <Icons.Calculator className="h-4 w-4 opacity-80" />
-                      Calcular Preço
+                      {isDirectContact ? <Icons.MessageCircle className="h-4 w-4 opacity-80" /> : <Icons.Calculator className="h-4 w-4 opacity-80" />}
+                      {isDirectContact ? 'Conversar sobre este serviço' : 'Calcular Preço'}
                     </button>
                   </div>
 
@@ -116,11 +118,11 @@ export default function ServicesList({ profile, onSelectService }: ServicesListP
         </div>
 
         {/* Small disclaimer */}
-        <div className="mt-12 text-center">
+        {!isDirectContact && <div className="mt-12 text-center">
           <p className="text-xs text-stone-400 leading-relaxed max-w-lg mx-auto">
             *Os valores acima representam estimativas de referência para mão de obra em condições ideais. Projetos complexos ou que exijam preparação prévia terão orçamento sob medida após vistoria.
           </p>
-        </div>
+        </div>}
 
       </div>
     </section>

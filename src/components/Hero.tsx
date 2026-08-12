@@ -1,14 +1,15 @@
 import { motion } from 'motion/react';
-import { ArrowRight, CheckCircle2, Award, Calendar, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { ProfessionalProfile } from '../types';
 
 interface HeroProps {
   profile: ProfessionalProfile;
   name: string;
   onScrollToContact: () => void;
+  isDirectContact: boolean;
 }
 
-export default function Hero({ profile, name, onScrollToContact }: HeroProps) {
+export default function Hero({ profile, name, onScrollToContact, isDirectContact }: HeroProps) {
   // Extract a specific background light shade for details
   const isPedreiro = profile.id === 'pedreiro';
   const isEletricista = profile.id === 'eletricista';
@@ -70,7 +71,7 @@ export default function Hero({ profile, name, onScrollToContact }: HeroProps) {
                 className={`group flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all duration-300 transform active:scale-98 shadow-sm cursor-pointer ${profile.accentBg}`}
                 id="hero-cta-btn"
               >
-                Solicitar Orçamento Online
+                {isDirectContact ? 'Falar no WhatsApp' : 'Solicitar Orçamento Online'}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
               
@@ -106,6 +107,10 @@ export default function Hero({ profile, name, onScrollToContact }: HeroProps) {
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                 <span className="text-xs font-medium text-stone-600">Atendimento Organizado</span>
               </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="text-xs font-medium text-stone-600">{profile.experienceYears} anos de experiência</span>
+              </div>
             </motion.div>
 
           </div>
@@ -123,7 +128,7 @@ export default function Hero({ profile, name, onScrollToContact }: HeroProps) {
               <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-xl">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-stone-100">
                   <img
-                    src={profile.portfolio[0].image}
+                    src={profile.heroImage ?? profile.portfolio[0].image}
                     alt={profile.portfolio[0].title}
                     className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     referrerPolicy="no-referrer"
@@ -136,37 +141,6 @@ export default function Hero({ profile, name, onScrollToContact }: HeroProps) {
                 </div>
               </div>
 
-              {/* Float Card 1: Experience */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, type: 'spring', stiffness: 120 }}
-                className="absolute -left-6 bottom-10 hidden sm:flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-lg md:-left-8"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-stone-900 text-amber-100">
-                  <Award className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans text-xs font-bold text-stone-950 uppercase tracking-wider">{profile.experienceYears} Anos</h4>
-                  <p className="text-[10px] text-stone-500">De Experiência Técnica</p>
-                </div>
-              </motion.div>
-
-              {/* Float Card 2: Satisfaction */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5, type: 'spring', stiffness: 120 }}
-                className="absolute -right-6 top-10 hidden sm:flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-lg md:-right-8"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FAF9F6] border border-stone-200 text-stone-850">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans text-xs font-bold text-stone-950 uppercase tracking-wider">100%</h4>
-                  <p className="text-[10px] text-stone-500">Clientes Satisfeitos</p>
-                </div>
-              </motion.div>
             </motion.div>
           </div>
 

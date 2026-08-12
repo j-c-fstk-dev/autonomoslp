@@ -32,6 +32,7 @@ export interface ProfessionalProfile {
   defaultName: string;
   tagline: string;
   avatar: string;
+  heroImage?: string;
   aboutTitle: string;
   aboutText: string;
   experienceYears: number;

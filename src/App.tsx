@@ -18,10 +18,11 @@ import {
 import DeveloperPanel from './components/DeveloperPanel';
 import Hero from './components/Hero';
 import ServicesList from './components/ServicesList';
+import PedreiroServices from './components/PedreiroServices';
 import EstimatorForm from './components/EstimatorForm';
 import PortfolioGallery from './components/PortfolioGallery';
 import FAQs from './components/FAQs';
-import { profiles } from './data';
+import { commonFAQs, pedreiroFAQs, profiles } from './data';
 
 const profileIds = ['pedreiro', 'eletricista', 'encanador'] as const;
 type ProfileId = (typeof profileIds)[number];
@@ -39,7 +40,7 @@ export default function App() {
   // The panel below can still switch it locally while developing a demo.
   const [role, setRole] = useState<ProfileId>(getConfiguredProfile);
   const [customName, setCustomName] = useState(() => profiles[getConfiguredProfile()].defaultName);
-  const [customPhone, setCustomPhone] = useState('5511999999999');
+  const [customPhone, setCustomPhone] = useState(() => import.meta.env.VITE_WHATSAPP_PHONE || '5511999999999');
   
   // Interaction states
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
@@ -65,6 +66,7 @@ export default function App() {
   }, []);
 
   const activeProfile = profiles[role];
+  const usesDirectWhatsApp = activeProfile.id === 'pedreiro';
 
   // Action: when a service is selected, scroll to estimator and focus it
   const handleSelectService = (serviceId: string) => {
@@ -82,10 +84,20 @@ export default function App() {
     }
   };
 
+  const handleStartWhatsAppConversation = (serviceName?: string) => {
+    const message = serviceName
+      ? `Olá, ${customName}! Vi seu site e gostaria de conversar sobre ${serviceName}.`
+      : activeProfile.whatsappPitch;
+    const phone = customPhone.replace(/\D/g, '');
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
   const handleReset = () => {
     setRole('pedreiro');
     setCustomName(profiles.pedreiro.defaultName);
-    setCustomPhone('5511999999999');
+    setCustomPhone(import.meta.env.VITE_WHATSAPP_PHONE || '5511999999999');
   };
 
   return (
@@ -124,19 +136,19 @@ export default function App() {
           <nav className="hidden md:flex items-center gap-8">
             <a href="#servicos" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Serviços</a>
             <a href="#portfolio" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Portfólio</a>
-            <a href="#depoimentos" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Depoimentos</a>
-            <a href="#orcamento" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Orçamento</a>
+            {!usesDirectWhatsApp && <a href="#depoimentos" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Depoimentos</a>}
+            {!usesDirectWhatsApp && <a href="#orcamento" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Orçamento</a>}
             <a href="#duvidas" className="text-xs font-bold text-stone-600 hover:text-stone-900 uppercase tracking-wider transition-colors">Dúvidas</a>
           </nav>
 
           {/* Contact Button */}
           <div className="hidden md:flex items-center gap-4">
             <button
-              onClick={handleScrollToContact}
+              onClick={usesDirectWhatsApp ? () => handleStartWhatsAppConversation() : handleScrollToContact}
               className={`rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider shadow-xs transition-all duration-300 transform active:scale-95 cursor-pointer ${activeProfile.accentBg}`}
               id="header-cta-btn"
             >
-              Fazer Orçamento
+              {usesDirectWhatsApp ? 'Falar no WhatsApp' : 'Fazer Orçamento'}
             </button>
           </div>
 
@@ -176,20 +188,24 @@ export default function App() {
                 >
                   Portfólio
                 </a>
-                <a
-                  href="#depoimentos"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-bold text-stone-700 hover:text-stone-950 py-1"
-                >
-                  Depoimentos
-                </a>
-                <a
-                  href="#orcamento"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-bold text-stone-700 hover:text-stone-950 py-1"
-                >
-                  Orçamento
-                </a>
+                {!usesDirectWhatsApp && (
+                  <a
+                    href="#depoimentos"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-bold text-stone-700 hover:text-stone-950 py-1"
+                  >
+                    Depoimentos
+                  </a>
+                )}
+                {!usesDirectWhatsApp && (
+                  <a
+                    href="#orcamento"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-bold text-stone-700 hover:text-stone-950 py-1"
+                  >
+                    Orçamento
+                  </a>
+                )}
                 <a
                   href="#duvidas"
                   onClick={() => setMobileMenuOpen(false)}
@@ -201,11 +217,11 @@ export default function App() {
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    handleScrollToContact();
+                    usesDirectWhatsApp ? handleStartWhatsAppConversation() : handleScrollToContact();
                   }}
                   className={`w-full text-center rounded-xl py-3 text-sm font-bold uppercase tracking-wider ${activeProfile.accentBg}`}
                 >
-                  Solicitar Orçamento
+                  {usesDirectWhatsApp ? 'Falar no WhatsApp' : 'Solicitar Orçamento'}
                 </button>
               </div>
             </motion.div>
@@ -217,18 +233,29 @@ export default function App() {
       <Hero 
         profile={activeProfile} 
         name={customName} 
-        onScrollToContact={handleScrollToContact} 
+        onScrollToContact={usesDirectWhatsApp ? () => handleStartWhatsAppConversation() : handleScrollToContact}
+        isDirectContact={usesDirectWhatsApp}
       />
 
       {/* 4. SERVICES LIST SECTION */}
-      <ServicesList 
-        profile={activeProfile} 
-        onSelectService={handleSelectService} 
-      />
+      {usesDirectWhatsApp ? (
+        <PedreiroServices
+          professionalName={customName}
+          professionalPhone={customPhone}
+          onStartWhatsAppConversation={handleStartWhatsAppConversation}
+        />
+      ) : (
+        <ServicesList
+          profile={activeProfile}
+          onSelectService={handleSelectService}
+          onStartWhatsAppConversation={handleStartWhatsAppConversation}
+        />
+      )}
 
       {/* 5. PORTFOLIO SHOWCASE */}
       <PortfolioGallery 
         profile={activeProfile} 
+        onStartWhatsAppConversation={handleStartWhatsAppConversation}
       />
 
       {/* 6. TRUST & SECURITY BRANDING ROW */}
@@ -270,16 +297,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* 7. ESTIMATOR & WHATSAPP GENERATOR */}
-      <EstimatorForm 
-        profile={activeProfile} 
-        professionalName={customName}
-        professionalPhone={customPhone}
-        selectedServiceId={selectedServiceId}
-      />
+      {/* The pedreiro landing page starts WhatsApp conversations directly. */}
+      {!usesDirectWhatsApp && (
+        <EstimatorForm
+          profile={activeProfile}
+          professionalName={customName}
+          professionalPhone={customPhone}
+          selectedServiceId={selectedServiceId}
+        />
+      )}
 
       {/* 8. TESTIMONIALS SECTION */}
-      <section id="depoimentos" className="bg-white py-20 border-b border-stone-200/50">
+      {!usesDirectWhatsApp && <section id="depoimentos" className="bg-white py-20 border-b border-stone-200/50">
         <div className="container mx-auto max-w-7xl px-6">
           
           <div className="mx-auto max-w-3xl text-center mb-16">
@@ -328,10 +357,10 @@ export default function App() {
           </div>
 
         </div>
-      </section>
+      </section>}
 
       {/* 9. FAQs ACCORDION */}
-      <FAQs />
+      <FAQs faqs={usesDirectWhatsApp ? pedreiroFAQs : commonFAQs} />
 
       {/* 10. PREMIUM FOOTER */}
       <footer className="bg-stone-900 text-white py-12 border-t border-stone-800">
@@ -346,7 +375,7 @@ export default function App() {
                 {activeProfile.roleName}
               </span>
               <p className="mt-4 text-xs text-stone-400 leading-relaxed max-w-sm">
-                Serviços técnicos especializados com compromisso inabalável de qualidade, pontualidade e transparência. Solicite um orçamento sem compromisso hoje mesmo.
+                Serviços técnicos especializados com compromisso inabalável de qualidade, pontualidade e transparência. {usesDirectWhatsApp ? 'Fale pelo WhatsApp para contar sobre sua obra.' : 'Solicite um orçamento sem compromisso hoje mesmo.'}
               </p>
             </div>
 
@@ -355,19 +384,21 @@ export default function App() {
               <ul className="mt-4 space-y-2 text-xs text-stone-400">
                 <li><a href="#servicos" className="hover:text-white transition-colors">Serviços</a></li>
                 <li><a href="#portfolio" className="hover:text-white transition-colors">Portfólio Concluído</a></li>
-                <li><a href="#depoimentos" className="hover:text-white transition-colors">Avaliações de Clientes</a></li>
-                <li><a href="#orcamento" className="hover:text-white transition-colors">Orçamentador Inteligente</a></li>
+                {!usesDirectWhatsApp && <li><a href="#depoimentos" className="hover:text-white transition-colors">Avaliações de Clientes</a></li>}
+                {usesDirectWhatsApp ? (
+                  <li><button onClick={() => handleStartWhatsAppConversation()} className="hover:text-white transition-colors cursor-pointer">Falar no WhatsApp</button></li>
+                ) : (
+                  <li><a href="#orcamento" className="hover:text-white transition-colors">Orçamentador Inteligente</a></li>
+                )}
               </ul>
             </div>
 
             <div className="md:col-span-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-stone-300 font-mono">Pitch de Demonstração</h4>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-stone-300 font-mono">{usesDirectWhatsApp ? 'Atendimento' : 'Pitch de Demonstração'}</h4>
               <p className="mt-4 text-xs text-stone-400 leading-relaxed">
-                Este site é um modelo de alta performance para profissionais autônomos. Desenvolvido para maximizar o fechamento de propostas de alto padrão.
+                {usesDirectWhatsApp ? 'Envie uma mensagem pelo WhatsApp para conversar sobre o seu projeto, tirar dúvidas e combinar os próximos passos.' : 'Este site é um modelo de alta performance para profissionais autônomos. Desenvolvido para maximizar o fechamento de propostas de alto padrão.'}
               </p>
-              <p className="mt-2 text-xs text-amber-200">
-                Criado por: <strong>dev.jorge.c@gmail.com</strong>
-              </p>
+              {!usesDirectWhatsApp && <p className="mt-2 text-xs text-amber-200">Criado por: <strong>dev.jorge.c@gmail.com</strong></p>}
             </div>
 
           </div>
@@ -385,12 +416,12 @@ export default function App() {
           <span className="text-xs font-bold text-stone-800 block truncate max-w-[150px]">{customName}</span>
         </div>
         <button
-          onClick={handleScrollToContact}
+          onClick={usesDirectWhatsApp ? () => handleStartWhatsAppConversation() : handleScrollToContact}
           className={`flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold text-stone-900 shadow-sm grow text-center cursor-pointer ${activeProfile.accentBg}`}
           id="mobile-sticky-cta"
         >
           <Phone className="h-3.5 w-3.5" />
-          Pedir Orçamento WhatsApp
+          {usesDirectWhatsApp ? 'Falar no WhatsApp' : 'Pedir Orçamento WhatsApp'}
         </button>
       </div>
 

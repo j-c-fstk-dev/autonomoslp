@@ -3,7 +3,16 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { commonFAQs } from '../data';
 
-export default function FAQs() {
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface FAQsProps {
+  faqs?: FAQ[];
+}
+
+export default function FAQs({ faqs = commonFAQs }: FAQsProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleAccordion = (idx: number) => {
@@ -29,7 +38,7 @@ export default function FAQs() {
 
         {/* FAQs Accordion */}
         <div className="space-y-4">
-          {commonFAQs.map((faq, index) => {
+          {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div

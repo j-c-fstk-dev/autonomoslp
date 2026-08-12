@@ -13,6 +13,7 @@ export const profiles: Record<'pedreiro' | 'eletricista' | 'encanador', Professi
     defaultName: 'Carlos Andrade',
     tagline: 'Pisos, Revestimentos & Reformas',
     avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80&w=256&h=256&crop=faces',
+    heroImage: 'https://imgs.search.brave.com/Bi4TXkY5HFUirs9G4CoMgG6L5n5TgmFoK2hjVwXvXog/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTg3/MjA2MTkwL3B0L2Zv/dG8vdHJhYmFsaGFk/b3ItcGVkcmVpcm8t/Y29uc3RydSVDMyVB/NyVDMyVBM28uanBn/P3M9NjEyeDYxMiZ3/PTAmaz0yMCZjPTdo/QnRNU2xQYWZnSlo0/Y0dmLVRXYjJNdTNH/d2RVZ1RUYWxmTVAx/NHFpWms9',
     heroHeadline: 'Construção e acabamento com o capricho que sua casa merece.',
     heroSubheadline: 'Especialista em assentamento de porcelanato, revestimentos decorativos e reformas completas. Trabalho limpo, no prazo e sem surpresas.',
     aboutTitle: 'Trabalho feito com honestidade, capricho e pontualidade.',
@@ -110,7 +111,7 @@ export const profiles: Record<'pedreiro' | 'eletricista' | 'encanador', Professi
         date: 'Há 2 semanas'
       }
     ],
-    whatsappPitch: 'Olá! Vi seu portfólio "Mão na Massa" e gostaria de solicitar um orçamento para assentamento de porcelanato ou reforma.'
+    whatsappPitch: 'Olá! Vi seu portfólio "Mão na Massa" e gostaria de conversar sobre uma obra.'
   },
   eletricista: {
     id: 'eletricista',
@@ -324,6 +325,20 @@ export const profiles: Record<'pedreiro' | 'eletricista' | 'encanador', Professi
   }
 };
 
+export const pedreiroMeteredServices = [
+  { id: 'porcelanato', name: 'Assentamento de porcelanato', description: 'Pisos de grandes formatos, alinhamento, nivelamento e recortes de acabamento.', basePrice: 120 },
+  { id: 'piso-ceramico', name: 'Assentamento de piso cerâmico', description: 'Aplicação em áreas internas e externas, respeitando caimento e juntas.', basePrice: 75 },
+  { id: 'revestimento-parede', name: 'Revestimento de paredes', description: 'Cozinhas, banheiros, lavabos e áreas de serviço com acabamento preciso.', basePrice: 95 },
+  { id: 'contrapiso', name: 'Contrapiso e regularização', description: 'Preparação da base para receber o acabamento, com nível e caimento adequados.', basePrice: 55 }
+];
+
+export const pedreiroFixedServices = [
+  { id: 'alvenaria', name: 'Paredes e divisórias de alvenaria', description: 'Execução de paredes, fechamentos e adequações de ambientes.' },
+  { id: 'banheiro', name: 'Reforma de banheiro', description: 'Demolição, preparação, impermeabilização e acabamento coordenados conforme a necessidade.' },
+  { id: 'impermeabilizacao', name: 'Impermeabilização de áreas molhadas', description: 'Banheiros, varandas e áreas de serviço, com avaliação do sistema adequado.' },
+  { id: 'reparos', name: 'Reparos e pequenos acabamentos', description: 'Correções de revestimento, rejunte, soleiras, nichos e ajustes pós-obra.' }
+];
+
 export const commonFAQs = [
   {
     question: 'Como funciona o processo de contratação?',
@@ -341,4 +356,16 @@ export const commonFAQs = [
     question: 'Os serviços têm garantia?',
     answer: 'Sim, absolutamente. Todos os nossos serviços estruturais e de acabamento possuem garantia de execução de 1 ano para instalações de acabamento e até 5 anos para infraestrutura oculta (como tubulações e fiação), desde que não haja modificações de terceiros.'
   }
+];
+
+export const pedreiroFAQs = [
+  {
+    question: 'Como funciona o processo de contratação?',
+    answer: 'Você chama diretamente pelo WhatsApp, conta um pouco sobre a obra e, se possível, envia fotos, medidas ou a planta do ambiente. A partir daí, combinamos os próximos passos e, quando necessário, agendamos uma visita técnica para avaliar o serviço.'
+  },
+  {
+    question: 'Vocês cobram pela visita de orçamento?',
+    answer: 'Para uma primeira conversa e avaliação por fotos ou planta no WhatsApp, não há custo. Quando a obra exigir vistoria técnica presencial, as condições de deslocamento são combinadas antes do agendamento.'
+  },
+  ...commonFAQs.slice(2)
 ];

@@ -16,8 +16,10 @@ definido durante o build pela variável `VITE_ACTIVE_PROFILE`.
 3. Defina o perfil desejado em `.env.local`:
    ```env
    VITE_ACTIVE_PROFILE=pedreiro
+   VITE_WHATSAPP_PHONE=5511999999999
    ```
    Valores aceitos: `pedreiro`, `eletricista` e `encanador`.
+   Use `VITE_WHATSAPP_PHONE` com DDI e DDD, somente números, para receber as conversas iniciadas pelo site.
 4. Execute `npm run dev`.
 
 Se a variável estiver ausente ou for inválida, o site usa `pedreiro` como
@@ -36,4 +38,6 @@ branch `main`. Em cada projeto, configure uma variável de ambiente de build:
 | Encanador | `encanador` |
 
 Use `npm run build` como comando de build e publique a pasta `dist`. Como a
-variável é lida no build, alterá-la exige um novo deploy.
+variável é lida no build, alterá-la exige um novo deploy. Para o projeto de
+pedreiro, configure também `VITE_WHATSAPP_PHONE` com o número que receberá as
+conversas.

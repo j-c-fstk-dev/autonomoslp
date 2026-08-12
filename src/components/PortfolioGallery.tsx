@@ -4,9 +4,11 @@ import { Project, ProfessionalProfile } from '../types';
 
 interface PortfolioGalleryProps {
   profile: ProfessionalProfile;
+  onStartWhatsAppConversation: () => void;
 }
 
-export default function PortfolioGallery({ profile }: PortfolioGalleryProps) {
+export default function PortfolioGallery({ profile, onStartWhatsAppConversation }: PortfolioGalleryProps) {
+  const isDirectContact = profile.id === 'pedreiro';
   return (
     <section id="portfolio" className="bg-white py-20 border-b border-stone-200/50">
       <div className="container mx-auto max-w-7xl px-6">
@@ -88,13 +90,23 @@ export default function PortfolioGallery({ profile }: PortfolioGalleryProps) {
           <p className="text-sm text-stone-600">
             Quer ver mais fotos ou falar sobre um projeto semelhante?
           </p>
-          <a
-            href="#orcamento"
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stone-900 hover:opacity-80 border-b border-stone-950 pb-0.5 transition-all cursor-pointer"
-            id="portfolio-cta-link"
-          >
-            Fazer uma simulação para seu espaço
-          </a>
+          {isDirectContact ? (
+            <button
+              onClick={onStartWhatsAppConversation}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stone-900 hover:opacity-80 border-b border-stone-950 pb-0.5 transition-all cursor-pointer"
+              id="portfolio-cta-link"
+            >
+              Falar sobre um projeto semelhante
+            </button>
+          ) : (
+            <a
+              href="#orcamento"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stone-900 hover:opacity-80 border-b border-stone-950 pb-0.5 transition-all cursor-pointer"
+              id="portfolio-cta-link"
+            >
+              Fazer uma simulação para seu espaço
+            </a>
+          )}
         </div>
 
       </div>
